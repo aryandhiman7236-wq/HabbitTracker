@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Progress — Habit & Goal Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"><span></span><span></span><span></span></div>
+        <div>
+          <div class="brand-name">Progress</div>
+          <div class="brand-sub">Habit & Goal Tracker</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="themeBtn" title="Toggle theme">☾</button>
+        <button class="profile-chip" id="profileBtn">A</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- DAILY / HOME -->
+      <section id="dailyPage" class="page active">
+        <div class="daily-hero">
+
+  <div class="glow-ring"></div>
+
+  <p class="eyebrow animated-greeting" id="greeting">
+    GOOD EVENING
+  </p>
+
+  <h1 class="animated-title">
+    Today's Progress
+  </h1>
+
+  <p class="animated-date" id="todayLabel">
+    Monday, September 2, 2026
+  </p>
+
+  <!-- REAL TIME CLOCK -->
+  <div class="live-clock" id="liveClock">
+    00:00:00
+  </div>
+
+  <div class="live-status">
+    <span class="live-dot"></span>
+    LIVE
+  </div>
+          <button class="primary-btn" id="addGoalBtn">+ Add Goal</button>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Daily Progress</div>
+            <div class="stat-value" id="dailyPercent">0%</div>
+            <div class="progress-track"><div id="dailyBar" class="progress-fill"></div></div>
+            <div class="stat-foot"><span id="completedCount">0 completed</span><span id="remainingCount">0 remaining</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Current Streak</div>
+            <div class="stat-value"><span id="streakCount">0</span> days</div>
+            <div class="mini-note">Keep showing up.</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Monthly Average</div>
+            <div class="stat-value" id="monthAverage">0%</div>
+            <div class="mini-note" id="monthNameStat">This month</div>
+          </article>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">DAILY CHECKLIST</p>
+            <h2>Goals for today</h2>
+          </div>
+          <span class="date-pill" id="datePill"></span>
+        </div>
+
+        <div id="goalList" class="goal-list"></div>
+
+        <div class="quote-card">
+          <div class="quote-icon">✦</div>
+          <div>
+            <strong>Consistency beats intensity.</strong>
+            <p>Small completed actions add up to visible progress.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- MONTHLY OVERVIEW -->
+      <section id="monthlyPage" class="page">
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow">YEAR OVERVIEW</p>
+            <h1>Monthly Overview</h1>
+            <p class="muted">Select any month to see its daily progress.</p>
+          </div>
+          <div class="year-switcher">
+            <button class="icon-btn" id="prevYear">‹</button>
+            <strong id="yearLabel"></strong>
+            <button class="icon-btn" id="nextYear">›</button>
+          </div>
+        </div>
+        <div id="monthGrid" class="month-grid"></div>
+      </section>
+
+      <!-- MONTH DETAIL -->
+      <section id="monthDetailPage" class="page">
+        <div class="detail-header">
+          <button class="back-btn" id="backToMonths">← Monthly Overview</button>
+          <div class="detail-title-row">
+            <div>
+              <p class="eyebrow" id="detailEyebrow">MONTH DETAIL</p>
+              <h1 id="detailMonthTitle">September</h1>
+              <p class="muted" id="detailMonthSub"></p>
+            </div>
+            <div class="detail-score">
+              <span>Monthly Progress</span>
+              <strong id="detailPercent">0%</strong>
+            </div>
+          </div>
+          <div class="progress-track large"><div id="detailBar" class="progress-fill"></div></div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-toolbar">
+            <strong>Daily Overview</strong>
+            <span class="muted" id="detailDaysInfo"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Progress</th>
+                  <th>Goals</th>
+                  <th>Status</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="detailTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- GOALS -->
+      <section id="goalsPage" class="page">
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow">MANAGE</p>
+            <h1>Goals</h1>
+            <p class="muted">Create and manage the goals that appear on your daily tracker.</p>
+          </div>
+          <button class="primary-btn" id="addGoalBtn2">+ Add Goal</button>
+        </div>
+        <div id="manageGoalList" class="manage-list"></div>
+      </section>
+
+      <!-- DIARIES -->
+      <section id="diariesPage" class="page">
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow">REFLECTIONS</p>
+            <h1>Diaries</h1>
+            <p class="muted">Save thoughts, notes and daily reflections.</p>
+          </div>
+          <button class="primary-btn" id="addDiaryBtn">+ New Diary</button>
+        </div>
+        <div id="diaryList" class="diary-list"></div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="profilePage" class="page">
+        <div class="profile-panel">
+          <div class="avatar-big">A</div>
+          <h1>Your Profile</h1>
+          <p class="muted">Personal settings for your tracker.</p>
+          <div class="settings-list">
+            <div class="setting"><span>Theme</span><button class="secondary-btn" id="themeBtn2">Toggle Light / Dark</button></div>
+            <div class="setting"><span>Stored data</span><button class="secondary-btn" id="clearDataBtn">Reset demo data</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item" data-page="goalsPage"><span>□</span><small>Goals</small></button>
+      <button class="nav-item active" data-page="dailyPage"><span>✓</span><small>Daily</small></button>
+      <button class="nav-item" data-page="monthlyPage"><span>▦</span><small>Monthly</small></button>
+      <button class="nav-item" data-page="diariesPage"><span>✎</span><small>Diaries</small></button>
+      <button class="nav-item" data-page="profilePage"><span>○</span><small>Profile</small></button>
+    </nav>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+<script type="module" src="script.js"></script>
+</body>
+</html>
