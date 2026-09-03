@@ -56,32 +56,71 @@
           <button class="primary-btn" id="addGoalBtn">+ Add Goal</button>
         </div>
 
-        <div class="stats-grid">
-          <article class="stat-card">
-            <div class="stat-label">Daily Progress</div>
-            <div class="stat-value" id="dailyPercent">0%</div>
-            <div class="progress-track"><div id="dailyBar" class="progress-fill"></div></div>
-            <div class="stat-foot"><span id="completedCount">0 completed</span><span id="remainingCount">0 remaining</span></div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Current Streak</div>
-            <div class="stat-value"><span id="streakCount">0</span> days</div>
-            <div class="mini-note">Keep showing up.</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Monthly Average</div>
-            <div class="stat-value" id="monthAverage">0%</div>
-            <div class="mini-note" id="monthNameStat">This month</div>
-          </article>
-        </div>
+      <div class="stats-grid">
 
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">DAILY CHECKLIST</p>
-            <h2>Goals for today</h2>
-          </div>
-          <span class="date-pill" id="datePill"></span>
-        </div>
+  <!-- 1. DAILY PROGRESS -->
+  <article class="stat-card">
+    <div class="stat-label">Daily Progress</div>
+
+    <div class="stat-value" id="dailyPercent">
+      0%
+    </div>
+
+    <div class="progress-track">
+      <div id="dailyBar" class="progress-fill"></div>
+    </div>
+
+    <div class="stat-foot">
+      <span id="completedCount">0 completed</span>
+      <span id="remainingCount">0 remaining</span>
+    </div>
+  </article>
+
+
+  <!-- 2. MONTHLY AVERAGE -->
+  <article class="stat-card">
+    <div class="stat-label">Monthly Average</div>
+
+    <div class="stat-value" id="monthAverage">
+      0%
+    </div>
+
+    <div class="mini-note" id="monthNameStat">
+      This month
+    </div>
+  </article>
+
+
+  <!-- 3. COMPLETED -->
+  <article class="stat-card">
+    <div class="stat-label">Completed</div>
+
+    <div class="stat-value" id="completedOverview">
+      0/0
+    </div>
+
+    <div class="mini-note">
+      Goals completed
+    </div>
+  </article>
+
+
+  <!-- 4. NOT COMPLETED -->
+  <article class="stat-card">
+    <div class="stat-label">Not Completed</div>
+
+    <div class="stat-value" id="notCompletedOverview">
+      0/0
+    </div>
+
+    <div class="mini-note">
+      Goals remaining
+    </div>
+  </article>
+
+</div>
+
+       <div class="daily-goals-space"></div>
 
         <div id="goalList" class="goal-list"></div>
 
@@ -129,11 +168,10 @@
           <div class="progress-track large"><div id="detailBar" class="progress-fill"></div></div>
         </div>
 
-        <div class="table-card">
-          <div class="table-toolbar">
-            <strong>Daily Overview</strong>
-            <span class="muted" id="detailDaysInfo"></span>
-          </div>
+       <div class="overview-title">
+  <strong>Slide to Overview</strong>
+  <span>Swipe to explore your daily progress</span>
+</div>
           <div class="table-wrap">
             <table>
               <thead>
@@ -142,7 +180,6 @@
                   <th>Progress</th>
                   <th>Goals</th>
                   <th>Status</th>
-                  <th>Notes</th>
                 </tr>
               </thead>
               <tbody id="detailTableBody"></tbody>
@@ -152,31 +189,71 @@
       </section>
 
       <!-- GOALS -->
-      <section id="goalsPage" class="page">
-        <div class="hero-row">
-          <div>
-            <p class="eyebrow">MANAGE</p>
-            <h1>Goals</h1>
-            <p class="muted">Create and manage the goals that appear on your daily tracker.</p>
-          </div>
-          <button class="primary-btn" id="addGoalBtn2">+ Add Goal</button>
-        </div>
-        <div id="manageGoalList" class="manage-list"></div>
-      </section>
+      <!-- GOALS -->
+<section id="goalsPage" class="page">
+
+  <div class="goals-notebook">
+
+    <!-- Pink Notebook Tab -->
+    <div class="goals-tab">
+      GOALS
+    </div>
+
+    <!-- Goals Header -->
+    <div class="goals-header">
+<div class="goals-heading">
+  <p class="eyebrow">MANAGE</p>
+  <h1>Goals</h1>
+  <p class="muted">Create, edit or remove your goals.</p>
+</div>
+
+      <!-- Keep same ID for existing JS -->
+      <button
+        class="primary-btn goals-add-btn"
+        id="addGoalBtn2"
+        type="button"
+      >
+        + Add Goal
+      </button>
+
+    </div>
+
+
+    <!-- Goals List -->
+    <div
+      id="manageGoalList"
+      class="goals-list"
+    ></div>
+
+  </div>
+
+</section>
 
       <!-- DIARIES -->
-      <section id="diariesPage" class="page">
-        <div class="hero-row">
-          <div>
-            <p class="eyebrow">REFLECTIONS</p>
-            <h1>Diaries</h1>
-            <p class="muted">Save thoughts, notes and daily reflections.</p>
-          </div>
-          <button class="primary-btn" id="addDiaryBtn">+ New Diary</button>
-        </div>
-        <div id="diaryList" class="diary-list"></div>
-      </section>
+     <!-- DIARIES -->
+<!-- DIARIES -->
+<section id="diariesPage" class="page">
 
+  <div class="notes-page">
+
+    <!-- NOTES HEADER -->
+    <div class="notes-title-tab">
+      NOTES
+    </div>
+
+    <!-- ADD NOTE -->
+    <div class="notes-toolbar">
+      <button class="notes-add-btn" id="addDiaryBtn">
+        + New Note
+      </button>
+    </div>
+
+    <!-- SAVED NOTES -->
+    <div id="diaryList" class="notes-list"></div>
+
+  </div>
+
+</section>
       <!-- PROFILE -->
       <section id="profilePage" class="page">
         <div class="profile-panel">
