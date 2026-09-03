@@ -757,14 +757,29 @@ function renderMonthly() {
 
   /* CLICK EVENT */
 grid.querySelectorAll(".month-card").forEach(card => {
-  card.addEventListener("click", () => {
-    selectedMonth = Number(card.dataset.month);
+card.addEventListener("click", () => {
 
-    monthDetailReturnPage = "monthlyPage";
+  selectedMonth =
+    Number(card.dataset.month);
 
-    showPage("monthDetailPage");
-    renderMonthDetail();
-  });
+
+  // Reset selected calendar date
+  selectedCalendarDay =
+    null;
+
+
+  monthDetailReturnPage =
+    "monthlyPage";
+
+
+  showPage(
+    "monthDetailPage"
+  );
+
+
+  renderMonthDetail();
+
+});
 });
 }
 
@@ -772,202 +787,745 @@ grid.querySelectorAll(".month-card").forEach(card => {
 // MONTH DETAIL
 // ======================================================
 
-function renderMonthDetail() {
+// ======================================================
+// CALENDAR MONTH DETAIL
+// ======================================================
 
-  const title = document.getElementById("detailMonthTitle");
-  const sub = document.getElementById("detailMonthSub");
-  const percent = document.getElementById("detailPercent");
-  const bar = document.getElementById("detailBar");
-  const info = document.getElementById("detailDaysInfo");
-  const tbody = document.getElementById("detailTableBody");
+let selectedCalendarDay = null;
 
-  if (!tbody) return;
 
-  const monthName = MONTHS[selectedMonth];
+function getDayProgress(year, month, day) {
 
-  const days = new Date(
-    currentYear,
-    selectedMonth + 1,
-    0
-  ).getDate();
+  const date = new Date(
+    year,
+    month,
+    day
+  );
 
-  const average = getMonthAverage(
-    currentYear,
-    selectedMonth
+  const key = todayKey(date);
+
+  const data =
+    completions[key] || {};
+
+  const completed =
+    goals.filter(
+      goal => data[goal.id]
+    ).length;
+
+
+  const progress =
+    goals.length > 0
+      ? Math.round(
+          (completed / goals.length) * 100
+        )
+      : 0;
+
+
+  return {
+    date,
+    key,
+    data,
+    completed,
+    progress
+  };
+
+}
+
+
+
+// ======================================================
+// DAY STATUS
+// ======================================================
+
+function getCalendarDayStatus(
+  year,
+  month,
+  day
+) {
+
+  const date =
+    new Date(year, month, day);
+
+
+  const now =
+    new Date();
+
+
+  now.setHours(
+    23,
+    59,
+    59,
+    999
   );
 
 
-  /* =========================
-     HEADER
-  ========================= */
+  // Future dates
+  if (date > now) {
 
-  if (title) {
-    title.textContent = monthName;
-  }
+    return "future";
 
-  if (sub) {
-    sub.textContent =
-      `${currentYear} · ${days} days`;
-  }
-
-  if (percent) {
-    percent.textContent = `${average}%`;
-  }
-
-  if (bar) {
-    bar.style.width = `${average}%`;
-  }
-
-  if (info) {
-    info.textContent = `${days} days`;
   }
 
 
-  /* =========================
-     DYNAMIC TABLE HEAD
-  ========================= */
-
-  const table = tbody.closest("table");
-
-  if (!table) return;
-
-  const thead = table.querySelector("thead");
-
-  if (thead) {
-
-    thead.innerHTML = `
-      <tr>
-
-        <th class="date-column">
-          <span>▣</span>
-          Date
-        </th>
-
-        <th class="progress-column">
-          <span>◯</span>
-          Progress Bar
-        </th>
-
-        ${goals.map(goal => `
-          <th class="goal-column">
-            <span>□</span>
-            ${escapeHTML(goal.name)}
-          </th>
-        `).join("")}
-
-      </tr>
-    `;
-  }
-
-
-  /* =========================
-     TABLE ROWS
-  ========================= */
-
-  tbody.innerHTML = "";
-
-  for (let day = 1; day <= days; day++) {
-
-    const date = new Date(
-      currentYear,
-      selectedMonth,
+  const dayData =
+    getDayProgress(
+      year,
+      month,
       day
     );
 
-    const key = todayKey(date);
 
-    const data =
-      completions[key] || {};
+  if (
+    dayData.completed === 0
+  ) {
 
+    return "empty";
 
-    const completed =
-      goals.filter(
-        goal => data[goal.id]
-      ).length;
+  }
 
 
-    const progress =
-      goals.length
-        ? Math.round(
-            (completed / goals.length) * 100
-          )
-        : 0;
+  if (
+    dayData.completed === goals.length
+  ) {
+
+    return "completed";
+
+  }
 
 
-    /* =========================
-       GOAL CHECKBOXES
-    ========================= */
+  return "partial";
 
-    const goalCells = goals.map(goal => {
+}
 
-      const checked =
+
+
+// ======================================================
+// RENDER SELECTED DAY
+// ======================================================
+
+function renderSelectedCalendarDay(
+  year,
+  month,
+  day
+) {
+
+  const title =
+    document.getElementById(
+      "selectedDayTitle"
+    );
+
+
+  const percent =
+    document.getElementById(
+      "selectedDayPercent"
+    );
+
+
+  const summary =
+    document.getElementById(
+      "selectedDaySummary"
+    );
+
+
+  const goalsContainer =
+    document.getElementById(
+      "selectedDayGoals"
+    );
+
+
+  if (
+    !title ||
+    !percent ||
+    !summary ||
+    !goalsContainer
+  ) {
+    return;
+  }
+
+
+  const date =
+    new Date(
+      year,
+      month,
+      day
+    );
+
+
+  const key =
+    todayKey(date);
+
+
+  const data =
+    completions[key] || {};
+
+
+  const completed =
+    goals.filter(
+      goal => data[goal.id]
+    ).length;
+
+
+  const progress =
+    goals.length
+      ? Math.round(
+          (completed / goals.length) * 100
+        )
+      : 0;
+
+
+  // TITLE
+  title.textContent =
+    date.toLocaleDateString(
+      "en-US",
+      {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      }
+    );
+
+
+  // PERCENT
+  percent.textContent =
+    `${progress}%`;
+
+
+  percent.style.setProperty(
+    "--progress",
+    `${progress * 3.6}deg`
+  );
+
+
+  // SUMMARY
+  summary.textContent =
+    `${completed} / ${goals.length} goals completed`;
+
+
+
+  // GOALS
+  if (!goals.length) {
+
+    goalsContainer.innerHTML = `
+      <div class="calendar-no-goals">
+        No goals available yet.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  goalsContainer.innerHTML =
+    goals.map(goal => {
+
+      const done =
         !!data[goal.id];
 
-      return `
-        <td class="goal-cell">
 
-          <span
-            class="notion-checkbox ${
-              checked ? "checked" : ""
-            }"
-          >
-            ${checked ? "✓" : ""}
+      return `
+
+        <div
+          class="
+            calendar-goal-item
+            ${done ? "done" : ""}
+          "
+        >
+
+          <div class="calendar-goal-left">
+
+            <span class="calendar-goal-check">
+
+              ${
+                done
+                  ? "✓"
+                  : ""
+              }
+
+            </span>
+
+
+            <span>
+              ${escapeHTML(goal.name)}
+            </span>
+
+          </div>
+
+
+          <span class="calendar-goal-status">
+
+            ${
+              done
+                ? "Completed"
+                : "Pending"
+            }
+
           </span>
 
-        </td>
+        </div>
+
       `;
 
     }).join("");
 
 
-    /* =========================
-       ROW
-    ========================= */
 
-    tbody.innerHTML += `
-
-      <tr>
-
-        <td class="date-cell">
-          ${date.toLocaleDateString(
-            "en-US",
-            {
-              month: "long",
-              day: "numeric",
-              year: "numeric"
-            }
-          )}
-        </td>
+}
 
 
-        <td class="progress-cell">
 
-          <div class="notion-progress">
+// ======================================================
+// RENDER MONTH DETAIL
+// ======================================================
 
-            <div class="notion-progress-track">
-
-              <div
-                class="notion-progress-fill"
-                style="width:${progress}%"
-              ></div>
-
-            </div>
-
-            <span>
-              ${progress}%
-            </span>
-
-          </div>
-
-        </td>
+function renderMonthDetail() {
 
 
-        ${goalCells}
+  const title =
+    document.getElementById(
+      "detailMonthTitle"
+    );
 
-      </tr>
+
+  const sub =
+    document.getElementById(
+      "detailMonthSub"
+    );
+
+
+  const percent =
+    document.getElementById(
+      "detailPercent"
+    );
+
+
+  const bar =
+    document.getElementById(
+      "detailBar"
+    );
+
+
+  const calendarGrid =
+    document.getElementById(
+      "monthCalendarGrid"
+    );
+
+
+  if (!calendarGrid) {
+    return;
+  }
+
+
+
+  // ====================================================
+  // MONTH DATA
+  // ====================================================
+
+  const daysInMonth =
+    new Date(
+      currentYear,
+      selectedMonth + 1,
+      0
+    ).getDate();
+
+
+  const monthName =
+    MONTHS[selectedMonth];
+
+
+  const average =
+    getMonthAverage(
+      currentYear,
+      selectedMonth
+    );
+
+
+
+  // ====================================================
+  // HEADER
+  // ====================================================
+
+  if (title) {
+
+    title.textContent =
+      `${monthName} ${currentYear}`;
+
+  }
+
+
+  if (sub) {
+
+    sub.textContent =
+      `${daysInMonth} days`;
+
+  }
+
+
+  if (percent) {
+
+    percent.textContent =
+      `${average}%`;
+
+  }
+
+
+  if (bar) {
+
+    bar.style.width =
+      `${average}%`;
+
+  }
+
+
+
+  // ====================================================
+  // DAY STATISTICS
+  // ====================================================
+
+  let completedDays = 0;
+
+  let partialDays = 0;
+
+  let noProgressDays = 0;
+
+
+
+  for (
+    let day = 1;
+    day <= daysInMonth;
+    day++
+  ) {
+
+
+    const date =
+      new Date(
+        currentYear,
+        selectedMonth,
+        day
+      );
+
+
+    const now =
+      new Date();
+
+
+    now.setHours(
+      23,
+      59,
+      59,
+      999
+    );
+
+
+    // Ignore future dates
+    if (date > now) {
+      continue;
+    }
+
+
+    const status =
+      getCalendarDayStatus(
+        currentYear,
+        selectedMonth,
+        day
+      );
+
+
+    if (
+      status === "completed"
+    ) {
+
+      completedDays++;
+
+    }
+
+
+    else if (
+      status === "partial"
+    ) {
+
+      partialDays++;
+
+    }
+
+
+    else if (
+      status === "empty"
+    ) {
+
+      noProgressDays++;
+
+    }
+
+  }
+
+
+
+  // ====================================================
+  // UPDATE STAT CARDS
+  // ====================================================
+
+  const completedDaysEl =
+    document.getElementById(
+      "completedDaysCount"
+    );
+
+
+  const partialDaysEl =
+    document.getElementById(
+      "partialDaysCount"
+    );
+
+
+  const noProgressDaysEl =
+    document.getElementById(
+      "noProgressDaysCount"
+    );
+
+
+  const averageEl =
+    document.getElementById(
+      "averageCompletionCount"
+    );
+
+
+
+  if (completedDaysEl) {
+
+    completedDaysEl.textContent =
+      completedDays;
+
+  }
+
+
+  if (partialDaysEl) {
+
+    partialDaysEl.textContent =
+      partialDays;
+
+  }
+
+
+  if (noProgressDaysEl) {
+
+    noProgressDaysEl.textContent =
+      noProgressDays;
+
+  }
+
+
+  if (averageEl) {
+
+    averageEl.textContent =
+      `${average}%`;
+
+  }
+
+
+
+  // ====================================================
+  // CALENDAR START POSITION
+  // MONDAY FIRST
+  // ====================================================
+
+  const firstDay =
+    new Date(
+      currentYear,
+      selectedMonth,
+      1
+    );
+
+
+  let startDay =
+    firstDay.getDay() - 1;
+
+
+  if (
+    startDay < 0
+  ) {
+
+    startDay = 6;
+
+  }
+
+
+
+  // ====================================================
+  // EMPTY CELLS BEFORE MONTH
+  // ====================================================
+
+  calendarGrid.innerHTML = "";
+
+
+  for (
+    let i = 0;
+    i < startDay;
+    i++
+  ) {
+
+    calendarGrid.innerHTML += `
+      <div class="calendar-day empty-day"></div>
+    `;
+
+  }
+
+
+
+  // ====================================================
+  // CALENDAR DAYS
+  // ====================================================
+
+  for (
+    let day = 1;
+    day <= daysInMonth;
+    day++
+  ) {
+
+
+    const status =
+      getCalendarDayStatus(
+        currentYear,
+        selectedMonth,
+        day
+      );
+
+
+    const dayInfo =
+      getDayProgress(
+        currentYear,
+        selectedMonth,
+        day
+      );
+
+
+    const isSelected =
+      selectedCalendarDay === day;
+
+
+    const completedGoalDots =
+      goals.slice(
+        0,
+        6
+      ).map(goal => {
+
+        const done =
+          !!dayInfo.data[goal.id];
+
+
+        return `
+          <span
+            class="
+              calendar-goal-dot
+              ${done ? "done" : ""}
+            "
+          ></span>
+        `;
+
+      }).join("");
+
+
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.type =
+      "button";
+
+
+    button.className =
+      `
+        calendar-day
+        ${status}
+        ${isSelected ? "selected" : ""}
+      `;
+
+
+    button.innerHTML = `
+
+      <span class="calendar-day-number">
+        ${day}
+      </span>
+
+
+      <div class="calendar-day-dots">
+        ${completedGoalDots}
+      </div>
 
     `;
+
+
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        selectedCalendarDay =
+          day;
+
+
+        renderMonthDetail();
+
+
+        renderSelectedCalendarDay(
+          currentYear,
+          selectedMonth,
+          day
+        );
+
+      }
+    );
+
+
+    calendarGrid.appendChild(
+      button
+    );
+
   }
+
+
+
+  // ====================================================
+  // DEFAULT SELECTED DAY
+  // ====================================================
+
+  const today =
+    new Date();
+
+
+  const isCurrentMonth =
+    today.getFullYear() ===
+      currentYear
+    &&
+    today.getMonth() ===
+      selectedMonth;
+
+
+
+  if (
+    !selectedCalendarDay ||
+    selectedCalendarDay > daysInMonth
+  ) {
+
+
+    selectedCalendarDay =
+      isCurrentMonth
+        ? today.getDate()
+        : 1;
+
+  }
+
+
+
+  renderSelectedCalendarDay(
+    currentYear,
+    selectedMonth,
+    selectedCalendarDay
+  );
+
 }
 
 
