@@ -150,43 +150,184 @@
         <div id="monthGrid" class="month-grid"></div>
       </section>
 
-      <!-- MONTH DETAIL -->
-      <section id="monthDetailPage" class="page">
-        <div class="detail-header">
-          <button class="back-btn" id="backToMonths">← Monthly Overview</button>
-          <div class="detail-title-row">
-            <div>
-              <p class="eyebrow" id="detailEyebrow">MONTH DETAIL</p>
-              <h1 id="detailMonthTitle">September</h1>
-              <p class="muted" id="detailMonthSub"></p>
-            </div>
-            <div class="detail-score">
-              <span>Monthly Progress</span>
-              <strong id="detailPercent">0%</strong>
-            </div>
-          </div>
-          <div class="progress-track large"><div id="detailBar" class="progress-fill"></div></div>
+    <!-- MONTH DETAIL / CALENDAR VIEW -->
+<section id="monthDetailPage" class="page calendar-detail-page">
+
+  <!-- HEADER -->
+  <div class="calendar-topbar">
+
+    <button
+      class="calendar-back-btn"
+      id="backToMonths"
+      type="button"
+    >
+      ← Back
+    </button>
+
+    <div class="calendar-month-title">
+      <h1 id="detailMonthTitle">February 2026</h1>
+      <p id="detailMonthSub">28 days</p>
+    </div>
+
+    <div class="calendar-progress-box">
+      <span>Monthly Progress</span>
+
+      <div class="calendar-progress-number">
+        <strong id="detailPercent">0%</strong>
+      </div>
+
+      <div class="calendar-mini-chart">
+        <div id="detailBar" class="calendar-mini-fill"></div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- STATS -->
+  <div class="calendar-stats-grid">
+
+    <article class="calendar-stat">
+      <span class="calendar-stat-icon success-icon">✓</span>
+
+      <div>
+        <small>Completed Days</small>
+        <strong id="completedDaysCount">0</strong>
+      </div>
+    </article>
+
+
+    <article class="calendar-stat">
+      <span class="calendar-stat-icon partial-icon">◐</span>
+
+      <div>
+        <small>Partial Days</small>
+        <strong id="partialDaysCount">0</strong>
+      </div>
+    </article>
+
+
+    <article class="calendar-stat">
+      <span class="calendar-stat-icon empty-icon">○</span>
+
+      <div>
+        <small>No Progress</small>
+        <strong id="noProgressDaysCount">0</strong>
+      </div>
+    </article>
+
+
+    <article class="calendar-stat">
+      <span class="calendar-stat-icon average-icon">↗</span>
+
+      <div>
+        <small>Avg. Completion</small>
+        <strong id="averageCompletionCount">0%</strong>
+      </div>
+    </article>
+
+  </div>
+
+
+  <!-- MAIN CALENDAR AREA -->
+  <div class="calendar-layout">
+
+
+    <!-- CALENDAR -->
+    <div class="calendar-card">
+
+      <div class="calendar-weekdays">
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+        <span>Sun</span>
+      </div>
+
+
+      <div
+        id="monthCalendarGrid"
+        class="month-calendar-grid"
+      ></div>
+
+
+      <!-- LEGEND -->
+      <div class="calendar-legend">
+
+        <div>
+          <span class="legend-dot legend-completed"></span>
+          Completed
         </div>
 
-       <div class="overview-title">
-  <strong>Slide to Overview</strong>
-  <span>Swipe to explore your daily progress</span>
-</div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Progress</th>
-                  <th>Goals</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="detailTableBody"></tbody>
-            </table>
-          </div>
+        <div>
+          <span class="legend-dot legend-partial"></span>
+          Partial
         </div>
-      </section>
+
+        <div>
+          <span class="legend-dot legend-empty"></span>
+          No Progress
+        </div>
+
+        <div>
+          <span class="legend-dot legend-future"></span>
+          No Data
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SELECTED DAY -->
+    <aside class="selected-day-panel">
+
+      <div class="selected-day-header">
+
+        <div>
+          <p class="selected-day-label">
+            SELECTED DAY
+          </p>
+
+          <h2 id="selectedDayTitle">
+            Select a date
+          </h2>
+        </div>
+
+        <div
+          id="selectedDayPercent"
+          class="selected-day-circle"
+        >
+          0%
+        </div>
+
+      </div>
+
+
+      <div class="selected-day-summary">
+
+        <span>Daily Completion</span>
+
+        <strong id="selectedDaySummary">
+          Select a date to view details
+        </strong>
+
+      </div>
+
+
+      <!-- GOALS -->
+      <div
+        id="selectedDayGoals"
+        class="selected-day-goals"
+      ></div>
+
+    </aside>
+
+  </div>
+
+</section>
 
       <!-- GOALS -->
       <!-- GOALS -->
