@@ -30,18 +30,18 @@ import {
 // ======================================================
 
 const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
   "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
 ];
 
 const DEFAULT_GOALS = [
@@ -368,6 +368,30 @@ function renderDaily() {
       : Math.round(
           (completed / total) * 100
         );
+        /* GOAL OVERVIEW COUNTS */
+
+const notCompleted =
+  total - completed;
+
+const completedOverview =
+  document.getElementById(
+    "completedOverview"
+  );
+
+const notCompletedOverview =
+  document.getElementById(
+    "notCompletedOverview"
+  );
+
+if (completedOverview) {
+  completedOverview.textContent =
+    `${completed}/${total}`;
+}
+
+if (notCompletedOverview) {
+  notCompletedOverview.textContent =
+    `${notCompleted}/${total}`;
+}
 
 
   const dailyPercent =
@@ -831,16 +855,6 @@ function renderMonthDetail() {
           </th>
         `).join("")}
 
-        <th class="notes-column">
-          <span>▤</span>
-          Notes
-        </th>
-
-        <th class="month-column">
-          <span>▣</span>
-          Month
-        </th>
-
       </tr>
     `;
   }
@@ -907,28 +921,6 @@ function renderMonthDetail() {
 
 
     /* =========================
-       DIARY / NOTES
-    ========================= */
-
-    const diary =
-      diaries.find(
-        item =>
-          item.date &&
-          item.date.startsWith(key)
-      );
-
-
-    const noteText =
-      diary
-        ? (
-            diary.title ||
-            diary.content ||
-            ""
-          )
-        : "";
-
-
-    /* =========================
        ROW
     ========================= */
 
@@ -972,26 +964,6 @@ function renderMonthDetail() {
 
         ${goalCells}
 
-
-        <td class="notes-cell">
-          ${
-            noteText
-              ? escapeHTML(
-                  noteText.slice(0, 45)
-                )
-              : ""
-          }
-        </td>
-
-
-        <td class="month-cell">
-
-          <span>▣</span>
-
-          ${monthName}
-
-        </td>
-
       </tr>
 
     `;
@@ -1002,75 +974,74 @@ function renderMonthDetail() {
 // ======================================================
 // GOALS MANAGEMENT
 // ======================================================
-
 function renderManageGoals() {
-
-  const list =
-    document.getElementById(
-      "manageGoalList"
-    );
+  const list = document.getElementById("manageGoalList");
 
   if (!list) return;
 
-
   if (!goals.length) {
-
     list.innerHTML = `
-      <div class="empty-state">
-        No goals created yet.
+      <div class="notes-empty">
+        NO GOALS YET
+        <br>
+        <span style="font-size:10px;">
+          Create your first goal.
+        </span>
       </div>
     `;
-
     return;
   }
 
+  list.innerHTML = goals.map(goal => `
+    <article class="goal-note-item">
 
-  list.innerHTML =
-    goals.map(goal => `
+      <div class="goal-note-main">
 
-      <div class="manage-goal-card">
+        <strong class="goal-note-title">
+          ${escapeHTML(goal.name)}
+        </strong>
 
-        <div>
+        ${
+          goal.sub
+            ? `<span class="goal-note-description">
+                ${escapeHTML(goal.sub)}
+              </span>`
+            : ""
+        }
 
-          <strong>
-            ${escapeHTML(goal.name)}
-          </strong>
-
-          <p>
-            ${escapeHTML(goal.sub || "")}
-          </p>
-
-          ${
-            goal.tag
-              ? `<span class="goal-tag">
-                  ${escapeHTML(goal.tag)}
-                </span>`
-              : ""
-          }
-
-        </div>
-
-        <div class="manage-actions">
-
-          <button
-            class="secondary-btn"
-            onclick="editGoal('${goal.id}')"
-          >
-            Edit
-          </button>
-
-          <button
-            class="danger-btn"
-            onclick="deleteGoal('${goal.id}')"
-          >
-            Delete
-          </button>
-
-        </div>
+        ${
+          goal.tag
+            ? `<span class="goal-note-tag">
+                ${escapeHTML(goal.tag)}
+              </span>`
+            : ""
+        }
 
       </div>
 
-    `).join("");
+
+      <div class="goal-note-actions">
+
+        <button
+          class="goal-note-edit"
+          type="button"
+          onclick="editGoal('${goal.id}')"
+        >
+          Edit
+        </button>
+
+        <button
+          class="goal-note-delete"
+          type="button"
+          onclick="deleteGoal('${goal.id}')"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </article>
+  `).join("");
 }
 
 
@@ -1083,11 +1054,6 @@ async function addGoal() {
   const name =
     document.getElementById(
       "goalName"
-    )?.value.trim();
-
-  const sub =
-    document.getElementById(
-      "goalSub"
     )?.value.trim();
 
   const tag =
@@ -1109,8 +1075,6 @@ async function addGoal() {
     id: createId("goal"),
 
     name,
-
-    sub,
 
     tag
   };
@@ -1172,16 +1136,6 @@ window.editGoal = function(goalId) {
 
     </div>
 
-    <div class="form-group">
-
-      <label>Description</label>
-
-      <input
-        id="goalSub"
-        value="${escapeHTML(goal.sub || "")}"
-      />
-
-    </div>
 
     <div class="form-group">
 
@@ -1224,11 +1178,6 @@ async function saveGoalEdit() {
   goal.name =
     document.getElementById(
       "goalName"
-    ).value.trim();
-
-  goal.sub =
-    document.getElementById(
-      "goalSub"
     ).value.trim();
 
   goal.tag =
@@ -1353,13 +1302,10 @@ window.deleteGoal = async function(goalId) {
 // ======================================================
 // DIARIES
 // ======================================================
-
 function renderDiaries() {
 
   const list =
-    document.getElementById(
-      "diaryList"
-    );
+    document.getElementById("diaryList");
 
   if (!list) return;
 
@@ -1367,8 +1313,12 @@ function renderDiaries() {
   if (!diaries.length) {
 
     list.innerHTML = `
-      <div class="empty-state">
-        No diary entries yet.
+      <div class="notes-empty">
+        NO NOTES YET
+        <br>
+        <span style="font-size:10px;">
+          Create your first note.
+        </span>
       </div>
     `;
 
@@ -1376,69 +1326,96 @@ function renderDiaries() {
   }
 
 
-  list.innerHTML =
-    diaries.map(diary => `
+  list.innerHTML = diaries.map(diary => {
 
-      <article class="diary-card">
+    const dateText = diary.date
+      ? new Date(diary.date).toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+          }
+        )
+      : "";
 
-        <div class="diary-card-top">
 
-          <div>
+    return `
 
-            <strong>
-              ${escapeHTML(
-                diary.title ||
-                "Untitled"
-              )}
-            </strong>
+      <article class="note-item"
+        data-note-id="${diary.id}">
 
-            <small>
-              ${diary.date
-                ? new Date(
-                    diary.date
-                  ).toLocaleDateString(
-                    "en-US",
-                    {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric"
-                    }
-                  )
-                : ""}
-            </small>
+        <div class="note-header">
 
-          </div>
+          <button
+            class="note-title-button"
+            type="button"
+            onclick="toggleNote('${diary.id}')">
 
-          <div class="manage-actions">
+            ${escapeHTML(
+              diary.title || "Untitled Note"
+            )}
+
+          </button>
+
+
+          <div class="note-actions">
 
             <button
-              class="secondary-btn"
-              onclick="editDiary('${diary.id}')"
-            >
+              class="note-edit-btn"
+              type="button"
+              onclick="editDiary('${diary.id}')">
+
               Edit
+
             </button>
 
+
             <button
-              class="danger-btn"
-              onclick="deleteDiary('${diary.id}')"
-            >
+              class="note-delete-btn"
+              type="button"
+              onclick="deleteDiary('${diary.id}')">
+
               Delete
+
             </button>
 
           </div>
 
         </div>
 
-        <p>
+
+        <small class="note-date">
+          ${dateText}
+        </small>
+
+
+        <div class="note-content">
+
           ${escapeHTML(
             diary.content || ""
           )}
-        </p>
+
+        </div>
 
       </article>
 
-    `).join("");
+    `;
+
+  }).join("");
 }
+window.toggleNote = function(diaryId) {
+
+  const item =
+    document.querySelector(
+      `.note-item[data-note-id="${diaryId}"]`
+    );
+
+  if (!item) return;
+
+  item.classList.toggle("open");
+
+};
 
 
 // ======================================================
@@ -1458,15 +1435,32 @@ async function addDiary() {
     )?.value.trim();
 
 
-  if (!content) {
+ if (!title) {
 
-    alert(
-      "Please write something."
-    );
+  alert(
+    "Please enter a title."
+  );
 
-    return;
-  }
+  document.getElementById(
+    "diaryTitle"
+  )?.focus();
 
+  return;
+}
+
+
+if (!content) {
+
+  alert(
+    "Please write something."
+  );
+
+  document.getElementById(
+    "diaryContent"
+  )?.focus();
+
+  return;
+}
 
   const diary = {
 
@@ -1528,13 +1522,13 @@ window.editDiary = function(diaryId) {
   openModal(`
 
     <div class="modal-heading">
-      <p class="eyebrow">
-        EDIT DIARY
-      </p>
+     <p class="eyebrow">
+  EDIT NOTE
+</p>
 
-      <h2>
-        Edit Diary
-      </h2>
+<h2>
+  Edit Note
+</h2>
     </div>
 
     <div class="form-group">
@@ -1758,19 +1752,6 @@ function openAddGoalModal() {
     <div class="form-group">
 
       <label>
-        Description
-      </label>
-
-      <input
-        id="goalSub"
-        placeholder="e.g. 1 hour exercise"
-      />
-
-    </div>
-
-    <div class="form-group">
-
-      <label>
         Category
       </label>
 
@@ -1809,14 +1790,15 @@ function openAddDiaryModal() {
     <div class="modal-heading">
 
       <p class="eyebrow">
-        REFLECTION
+        NEW NOTE
       </p>
 
       <h2>
-        New Diary
+        Create Note
       </h2>
 
     </div>
+
 
     <div class="form-group">
 
@@ -1826,30 +1808,34 @@ function openAddDiaryModal() {
 
       <input
         id="diaryTitle"
-        placeholder="Today's thoughts"
+        placeholder="Enter note title..."
+        maxlength="100"
       />
 
     </div>
 
+
     <div class="form-group">
 
       <label>
-        Reflection
+        Note
       </label>
 
       <textarea
         id="diaryContent"
-        rows="8"
+        rows="9"
         placeholder="Write your thoughts..."
       ></textarea>
 
     </div>
 
+
     <button
       class="primary-btn full"
-      id="saveDiaryBtn"
-    >
-      Save Diary
+      id="saveDiaryBtn">
+
+      Save Note
+
     </button>
 
   `);
@@ -1857,8 +1843,8 @@ function openAddDiaryModal() {
 
   document.getElementById(
     "saveDiaryBtn"
-  ).onclick =
-    addDiary;
+  ).onclick = addDiary;
+
 }
 
 
