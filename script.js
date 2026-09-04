@@ -782,7 +782,218 @@ card.addEventListener("click", () => {
 });
 });
 }
+// ======================================================
+// MONTHLY OVERVIEW
+// YEAR SWIPE + DESKTOP DRAG
+// ======================================================
 
+const monthlyPage =
+  document.getElementById(
+    "monthlyPage"
+  );
+
+
+let swipeStartX = 0;
+let swipeEndX = 0;
+
+let isDraggingYear = false;
+
+
+/* =====================================
+   CHANGE YEAR
+===================================== */
+
+function changeMonthlyYear(
+  direction
+) {
+
+  currentYear += direction;
+
+  renderMonthly();
+
+}
+
+
+/* =====================================
+   PREVIOUS YEAR BUTTON
+===================================== */
+
+document.getElementById(
+  "prevYear"
+)?.addEventListener(
+  "click",
+  () => {
+
+    changeMonthlyYear(
+      -1
+    );
+
+  }
+);
+
+
+/* =====================================
+   NEXT YEAR BUTTON
+===================================== */
+
+document.getElementById(
+  "nextYear"
+)?.addEventListener(
+  "click",
+  () => {
+
+    changeMonthlyYear(
+      1
+    );
+
+  }
+);
+
+
+/* =====================================
+   MOBILE TOUCH START
+===================================== */
+
+monthlyPage?.addEventListener(
+  "touchstart",
+  event => {
+
+    swipeStartX =
+      event.touches[0].clientX;
+
+  },
+  {
+    passive: true
+  }
+);
+
+
+/* =====================================
+   MOBILE TOUCH END
+===================================== */
+
+monthlyPage?.addEventListener(
+  "touchend",
+  event => {
+
+    swipeEndX =
+      event.changedTouches[0].clientX;
+
+
+    handleYearSwipe();
+
+  },
+  {
+    passive: true
+  }
+);
+
+
+/* =====================================
+   DESKTOP MOUSE DOWN
+===================================== */
+
+monthlyPage?.addEventListener(
+  "mousedown",
+  event => {
+
+    // Ignore buttons and month cards
+    if (
+      event.target.closest(
+        "button"
+      )
+    ) {
+      return;
+    }
+
+
+    isDraggingYear =
+      true;
+
+
+    swipeStartX =
+      event.clientX;
+
+  }
+);
+
+
+/* =====================================
+   DESKTOP MOUSE UP
+===================================== */
+
+document.addEventListener(
+  "mouseup",
+  event => {
+
+    if (
+      !isDraggingYear
+    ) {
+      return;
+    }
+
+
+    isDraggingYear =
+      false;
+
+
+    swipeEndX =
+      event.clientX;
+
+
+    handleYearSwipe();
+
+  }
+);
+
+
+/* =====================================
+   SWIPE DETECTION
+===================================== */
+
+function handleYearSwipe() {
+
+  const swipeDistance =
+    swipeEndX -
+    swipeStartX;
+
+
+  const minimumSwipe =
+    70;
+
+
+  // Swipe Left
+  // Next Year
+
+  if (
+    swipeDistance <
+    -minimumSwipe
+  ) {
+
+    changeMonthlyYear(
+      1
+    );
+
+    return;
+
+  }
+
+
+  // Swipe Right
+  // Previous Year
+
+  if (
+    swipeDistance >
+    minimumSwipe
+  ) {
+
+    changeMonthlyYear(
+      -1
+    );
+
+  }
+
+}
 // ======================================================
 // MONTH DETAIL
 // ======================================================
@@ -3233,6 +3444,7 @@ function showLoginNotice() {
 
 function showPage(pageId) {
 
+  // Remove active class from all pages
   document
     .querySelectorAll(".page")
     .forEach(page => {
@@ -3240,9 +3452,11 @@ function showPage(pageId) {
       page.classList.remove(
         "active"
       );
+
     });
 
 
+  // Show selected page
   const page =
     document.getElementById(
       pageId
@@ -3254,9 +3468,11 @@ function showPage(pageId) {
     page.classList.add(
       "active"
     );
+
   }
 
 
+  // Update bottom navigation
   document
     .querySelectorAll(
       ".nav-item"
@@ -3265,11 +3481,34 @@ function showPage(pageId) {
 
       item.classList.toggle(
         "active",
-        item.dataset.page ===
-          pageId
+        item.dataset.page === pageId
       );
+
     });
 
+
+  // =====================================
+  // DIARIES PAGE — HIDE THEME BUTTON
+  // =====================================
+
+  if (pageId === "diariesPage") {
+
+    document.body.classList.add(
+      "diaries-active"
+    );
+
+  } else {
+
+    document.body.classList.remove(
+      "diaries-active"
+    );
+
+  }
+
+
+  // =====================================
+  // PAGE RENDERING
+  // =====================================
 
   if (
     pageId ===
@@ -3277,6 +3516,7 @@ function showPage(pageId) {
   ) {
 
     renderMonthly();
+
   }
 
 
@@ -3286,6 +3526,7 @@ function showPage(pageId) {
   ) {
 
     renderMonthDetail();
+
   }
 
 
@@ -3295,6 +3536,7 @@ function showPage(pageId) {
   ) {
 
     renderManageGoals();
+
   }
 
 
@@ -3304,6 +3546,7 @@ function showPage(pageId) {
   ) {
 
     renderDiaries();
+
   }
 
 
@@ -3313,6 +3556,7 @@ function showPage(pageId) {
   ) {
 
     renderProfilePage();
+
   }
 
 
@@ -3322,7 +3566,9 @@ function showPage(pageId) {
   ) {
 
     renderDaily();
+
   }
+
 }
 // ======================================================
 // MONTH DETAIL BACK BUTTON
